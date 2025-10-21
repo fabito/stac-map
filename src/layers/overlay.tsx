@@ -12,6 +12,7 @@ import {
 } from "@chakra-ui/react";
 import Breadcrumbs from "../components/breadcrumbs";
 import { Examples } from "../components/examples";
+import HeaderConfig from "../components/header-config";
 import Panel, { type PanelProps } from "../components/panel";
 import { ColorModeButton } from "../components/ui/color-mode";
 import type { StacValue } from "../types/stac";
@@ -19,6 +20,7 @@ import type { StacValue } from "../types/stac";
 export interface OverlayProps extends PanelProps {
   picked: StacValue | undefined;
   setPicked: (picked: StacValue | undefined) => void;
+  setHeader: (header: string) => void;
 }
 
 export default function Overlay({
@@ -30,6 +32,7 @@ export default function Overlay({
   setPicked,
   items,
   filteredItems,
+  setHeader,
   ...props
 }: OverlayProps) {
   return (
@@ -57,6 +60,7 @@ export default function Overlay({
             )) || <HStack fontWeight={"light"}>stac-map</HStack>}
           </Box>
           <Box p={4} overflow={"scroll"} maxH={"80dvh"}>
+            <HeaderConfig onHeaderChange={setHeader} />
             <Panel
               href={href}
               setHref={setHref}

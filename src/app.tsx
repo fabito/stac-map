@@ -33,6 +33,7 @@ export default function App() {
   const [filter, setFilter] = useState(true);
   const [stacGeoparquetItemId, setStacGeoparquetItemId] = useState<string>();
   const [cogTileHref, setCogTileHref] = useState<string>();
+  const [header, setHeader] = useState<string | undefined>(undefined);
 
   // Derived state
   const {
@@ -46,6 +47,7 @@ export default function App() {
     fileUpload,
     datetimeBounds: filter ? datetimeBounds : undefined,
     stacGeoparquetItemId,
+    header,
   });
   const collectionsLink = value?.links?.find((link) => link.rel === "data");
   const { catalogs, collections: linkedCollections } = useStacChildren({
@@ -177,6 +179,7 @@ export default function App() {
         <Overlay
           href={href}
           setHref={setHref}
+          setHeader={setHeader}
           fileUpload={fileUpload}
           value={value}
           error={error}

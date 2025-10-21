@@ -5,7 +5,8 @@ import type { DatetimeBounds, StacAssets, StacValue } from "../types/stac";
 
 export async function getStacJsonValue(
   href: string,
-  fileUpload?: UseFileUploadReturn
+  fileUpload?: UseFileUploadReturn,
+  header?: string
 ): Promise<StacValue> {
   let url;
   try {
@@ -19,7 +20,7 @@ export async function getStacJsonValue(
       );
     }
   }
-  return await fetchStac(url);
+  return await fetchStac(url, "GET", undefined, header);
 }
 
 async function getStacJsonValueFromUpload(fileUpload: UseFileUploadReturn) {
@@ -31,13 +32,25 @@ async function getStacJsonValueFromUpload(fileUpload: UseFileUploadReturn) {
 export async function fetchStac(
   href: string | URL,
   method: "GET" | "POST" = "GET",
-  body?: string
+  body?: string,
+  header?: string
 ): Promise<StacValue> {
+  const headers: HeadersInit = {
+    Accept: "application/json",
+  };
+
+  if (header) {
+    const indexOfColon = header.indexOf(":");
+    if (indexOfColon > -1) {
+      const key = header.substring(0, indexOfColon).trim();
+      const value = header.substring(indexOfColon + 1).trim();
+      headers[key] = value;
+    }
+  }
+
   return await fetch(href, {
     method,
-    headers: {
-      Accept: "application/json",
-    },
+    headers,
     body,
   }).then(async (response) => {
     if (response.ok) {

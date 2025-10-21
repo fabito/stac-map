@@ -17,11 +17,13 @@ export default function useStacValue({
   fileUpload,
   datetimeBounds,
   stacGeoparquetItemId,
+  header,
 }: {
   href: string | undefined;
   fileUpload: UseFileUploadReturn;
   datetimeBounds: DatetimeBounds | undefined;
   stacGeoparquetItemId: string | undefined;
+  header: string | undefined;
 }) {
   const { db } = useDuckDb();
   const [connection, setConnection] = useState<AsyncDuckDBConnection>();
@@ -46,7 +48,7 @@ export default function useStacValue({
 
   const jsonResult = useQuery<StacValue | null>({
     queryKey: ["stac-value", href],
-    queryFn: () => getStacJsonValue(href || "", fileUpload),
+    queryFn: () => getStacJsonValue(href || "", fileUpload, header),
     enabled: (href && !href.endsWith(".parquet")) || false,
   });
   const stacGeoparquetResult = useQuery({
