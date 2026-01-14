@@ -1,7 +1,33 @@
 import type { UseFileUploadReturn } from "@chakra-ui/react";
 import type { StacAsset, StacCollection, StacItem, StacLink } from "stac-ts";
 import type { BBox2D } from "../types/map";
-import type { DatetimeBounds, StacAssets, StacValue } from "../types/stac";
+import type {
+  DatetimeBounds,
+  PrivateStacConfig,
+  StacAssets,
+  StacValue,
+} from "../types/stac";
+
+let privateStacConfig: PrivateStacConfig | undefined;
+
+function getPrivateStacConfig(): PrivateStacConfig | undefined {
+  if (privateStacConfig) {
+    return privateStacConfig;
+  }
+
+  const configStr = import.meta.env.VITE_PRIVATE_STAC_CONFIG;
+  if (!configStr) {
+    return undefined;
+  }
+
+  try {
+    privateStacConfig = JSON.parse(configStr);
+    return privateStacConfig;
+  } catch (error) {
+    console.error("Failed to parse VITE_PRIVATE_STAC_CONFIG:", error);
+    return undefined;
+  }
+}
 
 export async function getStacJsonValue(
   href: string,
@@ -33,11 +59,24 @@ export async function fetchStac(
   method: "GET" | "POST" = "GET",
   body?: string
 ): Promise<StacValue> {
+  const config = getPrivateStacConfig();
+  let headers: Record<string, string> = {
+    Accept: "application/json",
+  };
+
+  if (config) {
+    const url = href.toString();
+    for (const entry of config) {
+      if (url.startsWith(entry.baseUrl)) {
+        headers = { ...headers, ...entry.headers };
+        break;
+      }
+    }
+  }
+
   return await fetch(href, {
     method,
-    headers: {
-      Accept: "application/json",
-    },
+    headers,
     body,
   }).then(async (response) => {
     if (response.ok) {

@@ -37,3 +37,8 @@ export interface StacSearch {
 }
 
 export type DatetimeBounds = { start: Date; end: Date };
+
+export type PrivateStacConfig = {
+  baseUrl: string;
+  headers: Record<string, string>;
+}[];
