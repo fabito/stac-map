@@ -48,6 +48,19 @@ yarn playwright install
 yarn test
 ```
 
+## Private STAC APIs
+
+You can configure `stac-map` to include custom headers in requests to private STAC APIs.
+This is useful for authentication, for example.
+You'll need to create a `.env` file and set the `VITE_PRIVATE_STAC_CONFIG` variable to a JSON string.
+The JSON should be an array of objects, where each object has a `baseUrl` and a `headers` object.
+If a request is made to a URL that starts with a `baseUrl`, the corresponding `headers` will be added to the request.
+
+```shell
+# .env
+VITE_PRIVATE_STAC_CONFIG='[{"baseUrl": "https://private-stac-api.com", "headers": {"Authorization": "Bearer my-secret-token"}}]'
+```
+
 ## Contributing
 
 We have some [architecture documentation](./docs/architecture.md) to help you get the lay of the land.
